@@ -1,0 +1,92 @@
+buildscript {
+    ext.kotlin_version = '1.9.23'
+    
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2' // Replace with the actual version of the Android plugin
+        classpath 'com.google.gms:google-services:4.3.10' // Replace with the actual version of the Google Services plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "dev.flutter:flutter-gradle-plugin:1.0.0"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android' // Apply Kotlin plugin after defining its version
+apply plugin: 'com.google.gms.google-services' // Apply Google Services plugin
+apply plugin: 'dev.flutter.flutter-gradle-plugin' // Apply Flutter Gradle plugin
+
+android {
+    namespace "com.appp.dorm_hub"
+    compileSdkVersion 31 // Update to the latest compileSdkVersion
+    buildToolsVersion "31.0.0" // Update to the latest buildToolsVersion
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    defaultConfig {
+        applicationId "com.appp.dorm_hub"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false // Disable code minification for now
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.5.0' // Update to the latest version
+    implementation platform('com.google.firebase:firebase-bom:31.0.1') // Use the Firebase BOM version
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.google.firebase:firebase-auth'
+}
+

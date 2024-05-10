@@ -1,0 +1,40 @@
+pluginManagement {
+    def flutterSdkPath = {
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }
+    settings.ext.flutterSdkPath = flutterSdkPath()
+
+    includeBuild("${settings.ext.flutterSdkPath}/packages/flutter_tools/gradle")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+        id "com.android.application" version "7.3.0" apply false // Ensure you use the latest version of the Android Gradle plugin
+        id "com.google.gms.google-services" version "4.4.1" apply false // Update to the latest version of Google Services plugin
+        id "org.jetbrains.kotlin.android" version "1.9.23" apply false // Ensure you use the specified version of Kotlin
+    }
+}
+
+include ':firebase_core'
+project(':firebase_core').projectDir = new File(settingsDir, '../node_modules/firebase_core/android')
+
+include ':firebase_auth'
+project(':firebase_auth').projectDir = new File(settingsDir, '../node_modules/firebase_auth/android')
+
+include ':firebase_storage'
+project(':firebase_storage').projectDir = new File(settingsDir, '../node_modules/firebase_storage/android')
+
+include ':firebase_firestore'
+project(':firebase_firestore').projectDir = new File(settingsDir, '../node_modules/firebase_firestore/android')
+
+// Include other plugin projects similarly
+
+include ":app"
