@@ -29,5 +29,5 @@ class Dorm{
   // String get _imagePath4 => imagePath4;
   // String get _details => details;
 
-
+ 
 }
